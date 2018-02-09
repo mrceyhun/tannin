@@ -1,0 +1,38 @@
+{% block document_middle_col %}
+<template>
+  <div>
+    <b-form @submit="onQSubmit" @reset="onQReset" v-if="show">
+      <b-form-group id="inputGroupQ"
+                    label="Question:"
+                    label-for="inputQuestion"
+                    description="Enter your question.">
+        <b-form-input id="inputQuestion"
+                      type="text"
+                      v-model="vquestion"
+                      required
+                      placeholder="Enter your question">
+        </b-form-input>
+      </b-form-group>
+      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button type="reset" variant="danger">Reset</b-button>
+    </b-form>
+  </div>
+  <div>
+    <b-form @submit="onASubmit" @reset="onAReset" v-if="show">
+      <b-form-group id="inputGroupA"
+                    label="Answer:"
+                    label-for="inputAnswer"
+                    description="Enter your answer.">
+        <b-form-input id="inputAnswer"
+                      type="text"
+                      v-model="vanswer"
+                      required
+                      placeholder="Enter your answer">
+        </b-form-input>
+      </b-form-group>
+      <b-button type="submit" variant="primary">Submit</b-button>
+      <b-button type="reset" variant="danger">Reset</b-button>
+    </b-form>
+  </div>
+</template>
+{% endblock document_middle_col %}

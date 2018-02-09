@@ -1,0 +1,8 @@
+{% block document_left_col %}
+
+<input type="text" id="word" v-model="vword">
+<p> The value of input: [[vword]]</p>
+<button v-on:click="postWord()"> POST </button>
+<span>[[verror_word]]</span>
+
+{% endblock document_left_col %}
