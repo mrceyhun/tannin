@@ -1,3 +1,12 @@
 #row-top {
     padding-bottom: 1cm;
 }
+.font-alegreya {
+  font-family: 'Alegreya', serif;
+  font-size: 40px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}	

@@ -1,0 +1,17 @@
+ <div v-bind:style="{ display: game2_display}">
+  <p>Game 2</p>
+  <b-form @submit="onQueAnsSubmit" @reset="onQueAnsReset" v-if="show">
+    <b-form-group id="inputGroupQ" label="Question:" label-for="inputQuestion">
+      <b-form-input id="inputQuestion" type="text" v-model="vquestion" required placeholder="Only the question should include the word.">
+
+      </b-form-input>
+      </b-form-group>
+      <b-form-group id="inputGroupA" label="Answer:" label-for="inputAnswer">
+        <b-form-input id="inputAnswer" type="text" v-model="vanswer" required placeholder="The answer should NOT include the word.">
+
+        </b-form-input>
+      </b-form-group>
+    <b-button type="submit" variant="primary">Submit</b-button>
+    <b-button type="reset" variant="danger">Reset</b-button>
+  </b-form>
+</div>

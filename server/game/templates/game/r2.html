@@ -1,18 +1,16 @@
-{% block document_row_2 %}
 <b-container id="row-middle" class="bv-example-row">
 	<b-row>
 		<b-col>
-			{% block document_left_col %}
-			{% endblock document_left_col %}
+			{% include "game/r2_left.html" %}
 		</b-col>
 		<b-col>
-			{% block document_middle_col %}
-			{% endblock document_middle_col %}
+			{% include "game/r2_middle_g1.html" %}
+			{% include "game/r2_middle_g2.html" %}
+			{% include "game/r2_middle_g3.html" %}
+			{% include "game/r2_middle_g4.html" %}
 		</b-col>
 		<b-col>
-			{% block document_right_col %}
-			{% endblock document_right_col %}
+			{% include "game/r2_right.html" %}
 		</b-col>
 	</b-row>
 </b-container>
-{% endblock document_row_2 %}
