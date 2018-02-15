@@ -1,9 +1,4 @@
 from django.shortcuts import render
-
-from rest_framework import viewsets
-from wordapi.models import Word, Question, Answer
-from wordapi.serializers import WordSerializer, QuestionSerializer, AnswerSerializer
-
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.schemas import SchemaGenerator
@@ -11,7 +6,17 @@ from rest_framework.views import APIView
 from rest_framework_swagger import renderers
 
 from rest_framework.decorators import detail_route, list_route
-from random import shuffle
+
+from rest_framework import viewsets
+
+from wordapi.models import Word, Question, Answer
+from wordapi.models import Q_and_W_rel, A_and_W_rel, Q_A_and_W_rel
+from wordapi.models import Q_quality, A_quality, Q_and_A_compatibility
+
+from wordapi.serializers import WordSerializer, QuestionSerializer, AnswerSerializer
+from wordapi.serializers import Q_and_W_relSerializer, A_and_W_relSerializer, Q_A_and_W_relSerializer
+from wordapi.serializers import Q_qualitySerializer, A_qualitySerializer, Q_and_A_compatibilitySerializer
+
 #********************************************
 #Word
 class WordViewSet(viewsets.ModelViewSet):
@@ -53,8 +58,51 @@ class AnswerViewSet(viewsets.ModelViewSet):
         else:
             return super(AnswerViewSet, self).retrieve(request, pk)
 
-#********************************************
+#Question and Word Relation
+class Q_and_W_relViewSet(viewsets.ModelViewSet):
+    queryset = Q_and_W_rel.objects.all()
+    serializer_class = Q_and_W_relSerializer
 
+#Answer and Word Relation
+class A_and_W_relViewSet(viewsets.ModelViewSet):
+    queryset = A_and_W_rel.objects.all()
+    serializer_class = A_and_W_relSerializer
+
+#Question, Answer and Word Relation
+class Q_A_and_W_relViewSet(viewsets.ModelViewSet):
+    queryset = Q_A_and_W_rel.objects.all()
+    serializer_class = Q_A_and_W_relSerializer
+
+#Question Quality
+class Q_qualityViewSet(viewsets.ModelViewSet):
+    queryset = Q_quality.objects.all()
+    serializer_class = Q_qualitySerializer
+
+#Answer Quality
+class A_qualityViewSet(viewsets.ModelViewSet):
+    queryset = A_quality.objects.all()
+    serializer_class = A_qualitySerializer
+
+#Question and Answer Compatibility Check
+class Q_and_A_compatibilityViewSet(viewsets.ModelViewSet):
+    queryset = Q_and_A_compatibility.objects.all()
+    serializer_class = Q_and_A_compatibilitySerializer
+
+
+"""
+      ___           ___           ___           ___           ___           ___     
+     /\  \         /\  \         |\__\         /\__\         /\__\         /\__\    
+    /::\  \       /::\  \        |:|  |       /:/  /        /:/  /        /::|  |   
+   /:/\:\  \     /:/\:\  \       |:|  |      /:/__/        /:/  /        /:|:|  |   
+  /:/  \:\  \   /::\~\:\  \      |:|__|__   /::\  \ ___   /:/  /  ___   /:/|:|  |__ 
+ /:/__/ \:\__\ /:/\:\ \:\__\     /::::\__\ /:/\:\  /\__\ /:/__/  /\__\ /:/ |:| /\__\
+ \:\  \  \/__/ \:\~\:\ \/__/    /:/~~/~    \/__\:\/:/  / \:\  \ /:/  / \/__|:|/:/  /
+  \:\  \        \:\ \:\__\     /:/  /           \::/  /   \:\  /:/  /      |:/:/  / 
+   \:\  \        \:\ \/__/     \/__/            /:/  /     \:\/:/  /       |::/  /  
+    \:\__\        \:\__\                       /:/  /       \::/  /        /:/  /   
+     \/__/         \/__/                       \/__/         \/__/         \/__/    
+"""
+#********************************************
 class SwaggerSchemaView(APIView):
     permission_classes = [AllowAny]
     renderer_classes = [
@@ -66,3 +114,14 @@ class SwaggerSchemaView(APIView):
         generator = SchemaGenerator(title='Pastebin API')
         schema = generator.get_schema(request=request)
         return Response(schema)
+
+
+"""
+ ██████╗███████╗██╗   ██╗██╗  ██╗██╗   ██╗███╗   ██╗
+██╔════╝██╔════╝╚██╗ ██╔╝██║  ██║██║   ██║████╗  ██║
+██║     █████╗   ╚████╔╝ ███████║██║   ██║██╔██╗ ██║
+██║     ██╔══╝    ╚██╔╝  ██╔══██║██║   ██║██║╚██╗██║
+╚██████╗███████╗   ██║   ██║  ██║╚██████╔╝██║ ╚████║
+ ╚═════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+                                                    
+"""

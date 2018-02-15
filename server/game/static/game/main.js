@@ -50,7 +50,7 @@ var vroot = new Vue({
 			if (this.vword) {
 				axios.defaults.xsrfCookieName = 'csrftoken';
 				axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-				axios.post(word_url, {kelime: this.vword}, {
+				axios.post(word_url, {name: this.vword}, {
 					headers: {
 						"content-type": "application/json",
 					}
@@ -58,7 +58,7 @@ var vroot = new Vue({
 				then((response) => {
 					console.log("RESPONSE:" +response);
 					if(response.status == "201"){
-						this.vwords.push({kelime: this.vword});
+						this.vwords.push({name: this.vword});
 					}
 					this.vword = null;
 				})
@@ -75,7 +75,7 @@ var vroot = new Vue({
 /*===================================================================*/
 		getRandomWord: function () {
 			axios.get(random_word_url).then(response => {
-				this.random_word = response.data.kelime
+				this.random_word = response.data
 			})
 			.catch(e => {
 				console.log(e);
@@ -101,7 +101,7 @@ var vroot = new Vue({
 			if (this.vquestion) {
 				axios.defaults.xsrfCookieName = 'csrftoken';
 				axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-				axios.post(question_url, {question: this.vquestion}, {
+				axios.post(question_url, {sentence: this.vquestion}, {
 					headers: {
 						"content-type": "application/json",
 					}
@@ -109,7 +109,7 @@ var vroot = new Vue({
 				then((response) => {
 					console.log("RESPONSE:" +JSON.stringify(response));
 					if(response.status == "201"){
-						this.vquestions.push({question: this.vquestion});
+						this.vquestions.push({sentence: this.vquestion});
 					}
 					this.vquestion = null;
 				})
@@ -126,7 +126,7 @@ var vroot = new Vue({
 /*===================================================================*/
 		getRandomQuestion: function () {
 			axios.get(random_question_url).then(response => {
-				this.random_question = response.data.question
+				this.random_question = response.data
 			})
 			.catch(e => {
 				console.log(e);
@@ -152,7 +152,7 @@ var vroot = new Vue({
 			if (this.vanswer) {
 				axios.defaults.xsrfCookieName = 'csrftoken';
 				axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-				axios.post(answer_url, {answer: this.vanswer}, {
+				axios.post(answer_url, {sentence: this.vanswer}, {
 					headers: {
 						"content-type": "application/json",
 					}
@@ -160,7 +160,7 @@ var vroot = new Vue({
 				then((response) => {
 					console.log("RESPONSE:" +JSON.stringify(response));
 					if(response.status == "201"){
-						this.vanswers.push({answer: this.vanswer});
+						this.vanswers.push({sentence: this.vanswer});
 					}
 					this.vanswer = null;
 				})
@@ -177,7 +177,7 @@ var vroot = new Vue({
 /*===================================================================*/
 		getRandomAnswer: function () {
 			axios.get(random_answer_url).then(response => {
-				this.random_answer_url = response.data.answer
+				this.random_answer_url = response.data
 			})
 			.catch(e => {
 				console.log(e);
@@ -247,4 +247,4 @@ vroot.getWord();
 vroot.getQuest();
 vroot.getAnsw();
 vroot.getRandomWord();
-vroot.getRandomQuestion();
+//vroot.getRandomQuestion();

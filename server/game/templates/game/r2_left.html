@@ -1,8 +1,8 @@
 <div style="background-color: rgb(255, 230, 90);">  
-	<span class="font-alegreya">** [[ random_word ]] **</span> 
+	<span class="font-alegreya">** [[ random_word.name ]] **</span> 
 </div>
 
 <input type="text" id="word" v-model="vword">
-<p> The value of input: [[vword]]</p>
+<p> The value of input: [[ vword ]]</p>
 <button v-on:click="postWord()"> POST </button>
 <span>[[verror_word]]</span>

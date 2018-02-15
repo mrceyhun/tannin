@@ -1,17 +1,17 @@
 {% block document_right_col %}
 <h4>WORDS</h4>
 	<ul>
-		<li v-for="index in 3" v-if="vwords_rev.length">[[ vwords_rev[index-1].kelime ]]</li>
+		<li v-for="index in 3" v-if="vwords_rev.length">[[ vwords_rev[index-1].name ]]</li>
 		<span v-if="!vwords_rev.length">Hiç kelime yok</span>
 	</ul>
 <h4>QUESTIONS</h4>
 	<ul>
-		<li v-for="index in 3" v-if="vquestions_rev.length > 2">[[ vquestions_rev[index-1].question ]]</li>
+		<li v-for="index in 3" v-if="vquestions_rev.length > 2">[[ vquestions_rev[index-1].sentence ]]</li>
 		<span v-if="!vquestions.length">Hiç soru yok</span>
 	</ul>
 <h4>ANSWERS</h4>
 	<ul>
-		<li v-for="index in 3" v-if="vanswers_rev.length > 2">[[ vanswers_rev[index-1].answer ]]</li>
+		<li v-for="index in 3" v-if="vanswers_rev.length > 2">[[ vanswers_rev[index-1].sentence ]]</li>
 		<span v-if="!vanswers.length">Hiç cevap yok</span>
 	</ul>
 {% endblock document_right_col %}

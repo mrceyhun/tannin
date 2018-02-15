@@ -1,24 +1,9 @@
 from rest_framework import serializers
 from wordapi.models import Word, Question, Answer
+from wordapi.models import Q_and_W_rel, A_and_W_rel, Q_A_and_W_rel
+from wordapi.models import Q_quality, A_quality, Q_and_A_compatibility
 from django.contrib.auth.models import User
-
-class WordSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Word
-		fields = ("kelime",)
-
-class QuestionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Question
-        fields = ("question",)
-
-class AnswerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Answer
-        fields = ("answer",)
-
-
-
+from django.core.exceptions import ObjectDoesNotExist
 
 """
 ───│─────────────────────────────────────
@@ -30,6 +15,96 @@ class AnswerSerializer(serializers.ModelSerializer):
 ──▀███████████████████████████████████▀──
 ─────▀██████████████████████████████▀────
 """
+
+class WordSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Word
+		fields = ("id","name",)
+
+class QuestionSerializer(serializers.ModelSerializer):
+    sentence = serializers.CharField()
+    class Meta:
+        model = Question
+        fields = ("sentence",)
+    
+    def create(self, valid_data):
+        return Question.objects.create(**valid_data)
+    
+    def update(self, instance, valid_data):
+        instance.sentence = valid_data.get('sentence', instance.sentence)
+        instance.save()
+
+class AnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = ("id","sentence",)
+
+
+
+
+#######################################################
+#######################################################
+
+class Q_and_W_relSerializer(serializers.Serializer):
+    word = serializers.IntegerField()
+    question = QuestionSerializer()
+    class Meta:
+        model = Q_and_W_rel
+        fields = ("question","word",)
+    def to_representation(self, obj):
+        try:
+            word_obj = Word.objects.filter(pk=obj.word).first()
+            return {"id": obj.id, 
+                "question":{ "id": obj.question.id, "sentence": obj.question.sentence },
+                "word":{"id": word_obj.id, "name": word_obj.name}
+                }
+        except ObjectDoesNotExist:
+            print('Given id of the Word is not in the DB')
+    
+
+    def create(self, validated_data):
+        #if Word.objects.filter(id=validated_data.get('word')):
+        # First we create 'mod' data for the AssetModel
+        question_data = validated_data.pop('question')
+        question_model = Question.objects.create(**question_data)
+        relation = Q_and_W_rel.objects.create(question=question_model, **validated_data)
+        return relation
+        #else:print("AAAAAAAAAA\n\AAAAAAAAAA\nAAAAAAA\nAAAAAA\nA\n\n\n")
+#######################################################
+#######################################################
+
+
+
+
+class testSerializer(serializers.Serializer):
+    class Meta:
+        model = Q_and_W_rel
+        fields = ("question_obj","word_obj",)
+
+class A_and_W_relSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = A_and_W_rel
+        fields = ("answer","kelime",)
+
+class Q_A_and_W_relSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Q_A_and_W_rel
+        fields = ("question","answer","kelime",)
+
+class Q_qualitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Q_quality
+        fields = ("question","quality",)
+
+class A_qualitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = A_quality
+        fields = ("answer","quality",)
+
+class Q_and_A_compatibilitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Q_and_A_compatibility
+        fields = ("question","answer","compatibility",)
 #-----------------------------------------------------
 """
 ▀██▀─▄███▄─▀██─██▀██▀▀█
@@ -38,7 +113,6 @@ class AnswerSerializer(serializers.ModelSerializer):
 ▄██▄▄█▀▀▀─────▀──▄██▄▄█
 """
 #-----------------------------------------------------
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -53,3 +127,4 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
         return user
+

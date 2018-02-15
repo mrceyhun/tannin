@@ -1,9 +1,10 @@
 from django.db import models
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.exceptions import ObjectDoesNotExist
 
 class Word(models.Model):
-    kelime = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     class Meta:
         verbose_name = "word"
         verbose_name_plural = "words"
@@ -12,52 +13,61 @@ class Word(models.Model):
 
 class Question(models.Model):
     #user_id
-    question = models.CharField(max_length=500)
+    sentence = models.CharField(max_length=500)
     class Meta:
         verbose_name = "question"
         verbose_name_plural = "questions"
     def __unicode__(self):
-        return self.question
+        return self.sentence
 
 class Answer(models.Model):
     #user_id
-    answer = models.CharField(max_length=500)
+    sentence = models.CharField(max_length=500)
     class Meta:
         verbose_name = "answer"
         verbose_name_plural = "answers"
     def __unicode__(self):
-        return self.answer
+        return self.sentence
 
 #d.phonenumber_set.objects.all()
 class Q_and_W_rel(models.Model):
     #user_id
-    question = models.OneToOneField(Question, primary_key=True, on_delete=models.CASCADE)
-    kelime = models.OneToOneField(Word, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    #ID of word
+    word = models.PositiveIntegerField()
+    def clean(self):
+        if Word.objects.filter(id=word).count() <= 0:
+            raise ObjectDoesNotExist(_('Given id of the Word is not in the DB'))
+
 
 class A_and_W_rel(models.Model):
-    answer = models.OneToOneField(Answer, primary_key=True, on_delete=models.CASCADE)
-    kelime = models.OneToOneField(Word, on_delete=models.CASCADE)
+    answer = models.PositiveIntegerField(primary_key=True)
+    kelime = models.PositiveIntegerField()
 
 class Q_A_and_W_rel(models.Model):
-    question = models.OneToOneField(Question, primary_key=True, on_delete=models.CASCADE)
-    answer = models.OneToOneField(Answer,  on_delete=models.CASCADE)
-    kelime = models.OneToOneField(Word, on_delete=models.CASCADE)
+    question = models.PositiveIntegerField(primary_key=True)
+    answer = models.PositiveIntegerField()
+    kelime = models.PositiveIntegerField()
 
 class Q_quality(models.Model):
-    question = models.OneToOneField(Question, primary_key=True, on_delete=models.CASCADE)
+    question = models.PositiveIntegerField(primary_key=True)
     #user_id     models.ForeignKey(Question, primary_key=True, on_delete=models.CASCADE)
     quality =  models.BooleanField()
 
 class A_quality(models.Model):
-    answer = models.OneToOneField(Answer, primary_key=True, on_delete=models.CASCADE)
+    answer = models.PositiveIntegerField(primary_key=True)
     #user_id     models.ForeignKey(Question, primary_key=True, on_delete=models.CASCADE)
     quality =  models.BooleanField()
 
 class Q_and_A_compatibility(models.Model):
-    question = models.OneToOneField(Question, primary_key=True, on_delete=models.CASCADE)
-    answer = models.OneToOneField(Answer,  on_delete=models.CASCADE)
+    question = models.PositiveIntegerField(primary_key=True)
+    answer = models.PositiveIntegerField()
     #user_id     models.ForeignKey(Question, primary_key=True, on_delete=models.CASCADE)
     compatibility =  models.BooleanField()
+
+
+
+
 
 """
 class User_control(models.Model):
