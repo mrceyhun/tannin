@@ -19,17 +19,15 @@ from django.core.exceptions import ObjectDoesNotExist
 class WordSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Word
-		fields = ("id","name",)
+		fields = '__all__'
 
 class QuestionSerializer(serializers.ModelSerializer):
     sentence = serializers.CharField()
     class Meta:
         model = Question
-        fields = ("sentence",)
-    
+        fields = '__all__'
     def create(self, valid_data):
         return Question.objects.create(**valid_data)
-    
     def update(self, instance, valid_data):
         instance.sentence = valid_data.get('sentence', instance.sentence)
         instance.save()
@@ -37,69 +35,71 @@ class QuestionSerializer(serializers.ModelSerializer):
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = ("id","sentence",)
-
+        fields = '__all__'
 #######################################################
 #######################################################
 
 class Q_and_W_relSerializer(serializers.Serializer):
-    word = serializers.IntegerField()
-    question = QuestionSerializer()
     class Meta:
         model = Q_and_W_rel
-        fields = ("question","word",)
+        fields = '__all__'
+    word = serializers.IntegerField()
+    question = QuestionSerializer()
     def to_representation(self, obj):
         try:
             word_obj = Word.objects.filter(pk=obj.word).first()
-            return {"question": obj.question,
-                    "word": obj.word }
+            # "question": ID, "word": ID
+            return {"question": obj.question, "word": obj.word }
         except ObjectDoesNotExist:
             print('Given id of the Word is not in the DB')
-    
-
     def create(self, validated_data):
-        #if Word.objects.filter(id=validated_data.get('word')):
-        # First we create 'mod' data for the AssetModel
         question_data = validated_data.pop('question')
         question_model = Question.objects.create(**question_data)
         relation = Q_and_W_rel.objects.create(question=question_model.pk, **validated_data)
         return relation
-        #else:print("AAAAAAAAAA\n\AAAAAAAAAA\nAAAAAAA\nAAAAAA\nA\n\n\n")
-#######################################################
-#######################################################
 
-
-
-
-class testSerializer(serializers.Serializer):
-    class Meta:
-        model = Q_and_W_rel
-        fields = ("question_obj","word_obj",)
 
 class A_and_W_relSerializer(serializers.ModelSerializer):
     class Meta:
         model = A_and_W_rel
-        fields = ("answer","kelime",)
+        fields = '__all__'
+    word = serializers.IntegerField()
+    answer = AnswerSerializer()
+    def to_representation(self, obj):
+        try:
+            word_obj = Word.objects.filter(pk=obj.word).first()
+            # "answer": ID, "word": ID
+            return {"answer": obj.answer, "word": obj.word }
+        except ObjectDoesNotExist:
+            print('Given id of the Word is not in the DB')
+    def create(self, validated_data):
+        answer_data = validated_data.pop('answer')
+        answer_model = Answer.objects.create(**answer_data)
+        relation = A_and_W_rel.objects.create(answer=answer_model.pk, **validated_data)
+        return relation
 
+#######################################################
+#######################################################
 class Q_A_and_W_relSerializer(serializers.ModelSerializer):
     class Meta:
         model = Q_A_and_W_rel
-        fields = ("question","answer","kelime",)
+        fields = '__all__' #("question","answer","kelime",)
+
 
 class Q_qualitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Q_quality
-        fields = ("question","quality",)
+        fields = '__all__' #("question","quality",)
 
 class A_qualitySerializer(serializers.ModelSerializer):
     class Meta:
         model = A_quality
-        fields = ("answer","quality",)
+        fields = '__all__' #("answer","quality",)
 
 class Q_and_A_compatibilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Q_and_A_compatibility
-        fields = ("question","answer","compatibility",)
+        fields = '__all__' #("question","answer","compatibility",)
 #-----------------------------------------------------
 """
 ▀██▀─▄███▄─▀██─██▀██▀▀█

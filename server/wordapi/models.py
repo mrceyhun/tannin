@@ -29,10 +29,9 @@ class Answer(models.Model):
     def __unicode__(self):
         return self.sentence
 
-#d.phonenumber_set.objects.all()
 class Q_and_W_rel(models.Model):
     #user_id
-    question = models.PositiveIntegerField()
+    question = models.PositiveIntegerField(primary_key=True)
     #ID of word
     word = models.PositiveIntegerField()
     def clean(self):
@@ -42,7 +41,10 @@ class Q_and_W_rel(models.Model):
 
 class A_and_W_rel(models.Model):
     answer = models.PositiveIntegerField(primary_key=True)
-    kelime = models.PositiveIntegerField()
+    word = models.PositiveIntegerField()
+    def clean(self):
+        if Word.objects.filter(id=word).count() <= 0:
+            raise ObjectDoesNotExist(_('Given id of the Word is not in the DB'))
 
 class Q_A_and_W_rel(models.Model):
     question = models.PositiveIntegerField(primary_key=True)

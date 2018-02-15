@@ -5,6 +5,8 @@ let answer_url = base_url + "as/";
 let random_word_url = word_url + "0/";
 let random_question_url =  question_url + "0/";
 let random_answer_url =  answer_url + "0/";
+let qw_rel_url = base_url + "qw_rel/";
+let aw_rel_url = base_url + "aw_rel/";
 
 var vroot = new Vue({
 	delimiters: ['[[', ']]'],
@@ -31,11 +33,11 @@ var vroot = new Vue({
 		random_answer: ""
 	},
 	methods : {
-/*=======================================================================================*/
-/*[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ WORD ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]*/
-/*=======================================================================================*/
+		/*=======================================================================================*/
+		/*[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ WORD ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]*/
+		/*=======================================================================================*/
 
-/*-------------------------- GET WORD --------------------------*/
+		/*-------------------------- GET WORD --------------------------*/
 		getWord: function () {
 			axios.get(word_url).then(response => {
 				this.vwords = response.data
@@ -44,7 +46,7 @@ var vroot = new Vue({
 				console.log(e);
 			})
 		},
-/*---------------------------- POST WORD ----------------------------*/
+		/*---------------------------- POST WORD ----------------------------*/
 		postWord: function () {
 			if (this.vword) {
 				axios.defaults.xsrfCookieName = 'csrftoken';
@@ -69,7 +71,7 @@ var vroot = new Vue({
 				this.verror_word = "Input is empty!";
 			}
 		},
-/*------------------------- GET RANDOM WORD -------------------------*/
+		/*------------------------- GET RANDOM WORD -------------------------*/
 		getRandomWord: function () {
 			axios.get(random_word_url).then(response => {
 				this.random_word = response.data
@@ -80,11 +82,11 @@ var vroot = new Vue({
 		},
 
 
-/*=======================================================================================*/
-/*[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ QUESTION ]]]]]]]]]]]]]]]]]]]]]]]]]]*/
-/*=======================================================================================*/
+		/*=======================================================================================*/
+		/*[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ QUESTION ]]]]]]]]]]]]]]]]]]]]]]]]]]*/
+		/*=======================================================================================*/
 
-/*-------------------------- GET QUESTION --------------------------*/
+		/*-------------------------- GET QUESTION --------------------------*/
 		getQuest: function () {
 			axios.get(question_url).then(response => {
 				this.vquestions = response.data
@@ -93,7 +95,7 @@ var vroot = new Vue({
 				console.log(e);
 			})
 		},
-/*-------------------------- POST QUESTION --------------------------*/
+		/*-------------------------- POST QUESTION --------------------------*/
 		postQuest: function () {
 			if (this.vquestion) {
 				axios.defaults.xsrfCookieName = 'csrftoken';
@@ -118,7 +120,7 @@ var vroot = new Vue({
 				this.verror_question = "Question is empty!";
 			}
 		},
-/*------------------------ GET RANDOM QUESTION ------------------------*/
+		/*------------------------ GET RANDOM QUESTION ------------------------*/
 		getRandomQuestion: function () {
 			axios.get(random_question_url).then(response => {
 				this.random_question = response.data
@@ -128,12 +130,11 @@ var vroot = new Vue({
 			})
 		},
 
+		/*=======================================================================================*/
+		/*[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ ANSWER ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]*/
+		/*=======================================================================================*/
 
-/*=======================================================================================*/
-/*[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ ANSWER ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]*/
-/*=======================================================================================*/
-
-/*------------------------- GET ANSWER -------------------------*/
+		/*------------------------- GET ANSWER -------------------------*/
 		getAnsw: function () {
 			axios.get(answer_url).then(response => {
 				this.vanswers = response.data
@@ -142,7 +143,7 @@ var vroot = new Vue({
 				console.log(e);
 			})
 		},
-/*------------------------- POST ANSWER -------------------------*/
+		/*------------------------- POST ANSWER -------------------------*/
 		postAnsw: function () {
 			if (this.vanswer) {
 				axios.defaults.xsrfCookieName = 'csrftoken';
@@ -164,10 +165,10 @@ var vroot = new Vue({
 				});
 				
 			}else{
-				this.verror_answer = "Question is empty!";
+				this.verror_answer = "Answer is empty!";
 			}
 		},
-/*---------------------- GET RANDOM ANSWER ----------------------*/
+		/*---------------------- GET RANDOM ANSWER ----------------------*/
 		getRandomAnswer: function () {
 			axios.get(random_answer_url).then(response => {
 				this.random_answer_url = response.data
@@ -178,16 +179,72 @@ var vroot = new Vue({
 		},
 
 
-/*=======================================================================================*/
-/*[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ QUESTİON WORD REL ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]*/
-/*=======================================================================================*/
+		/*=======================================================================================*/
+		/*[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ QUESTİON WORD REL ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]*/
+		/*=======================================================================================*/
 
-/*------------------------- POST ANSWER -------------------------*/
-		postQArel: function () {
+		/*------------------------- GET QW REL  -------------------------*/
+		getQWrel: function () {
+			axios.get(qw_rel_url).then(response => {
+				//this.vword.id  = response.data.word
+				//this.vquestion = response.data.question
+			})
+			.catch(e => {
+				console.log(e);
+			})
+		},
+		/*------------------------- POST QW REL -------------------------*/
+		postQWrel: function () {
 			if (this.vanswer) {
 				axios.defaults.xsrfCookieName = 'csrftoken';
 				axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-				axios.post(answer_url, {sentence: this.vanswer}, {
+				axios.post(qw_rel_url, {
+					word: this.random_word.id,
+					question: {sentence: this.vquestion}
+				}, {
+					headers: {
+						"content-type": "application/json",
+					}
+				}).
+				then((response) => {
+					console.log("RESPONSE:" +JSON.stringify(response));
+					if(response.status == "201"){
+						this.vquestions.push({sentence: this.vquestion});
+					}
+					this.vquestion = null;
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+				
+			}else{
+				this.verror_question = "Question is empty!";
+			}
+		},
+
+		/*=======================================================================================*/
+		/*[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[ ANSWER WORD REL ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]*/
+		/*=======================================================================================*/
+
+		/*------------------------- GET AW REL  -------------------------*/
+		getAWrel: function () {
+			axios.get(aw_rel_url).then(response => {
+				//this.vword.id  = response.data.word
+				//this.vanswer = response.data.answer
+			})
+			.catch(e => {
+				console.log(e);
+			})
+		},
+		/*------------------------- POST AW REL -------------------------*/
+		postAWrel: function () {
+			if (this.vanswer) {
+				axios.defaults.xsrfCookieName = 'csrftoken';
+				axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+				axios.post(aw_rel_url, {
+					word: this.random_word.id,
+					answer: {sentence: this.vanswer}
+				}, {
 					headers: {
 						"content-type": "application/json",
 					}
@@ -204,28 +261,73 @@ var vroot = new Vue({
 				});
 				
 			}else{
-				this.verror_answer = "Question is empty!";
+				this.verror_answer = "Answer is empty!";
 			}
 		},
-
-/*=======================================================================================*/
-/*[[[[[[[[[[[[[[[[[[[[[[[[ SUBMIT GAME1 (Q&A) ]]]]]]]]]]]]]]]]]]]]]]]]*/
-/*=======================================================================================*/
-		onQueAnsSubmit: function (event){
+		/*=======================================================================================*/
+		/*[[[[[[[[[[[[[[[[[[[[[[[[ SUBMIT GAMES ]]]]]]]]]]]]]]]]]]]]]]]]*/
+		/*=======================================================================================*/
+		onGame1Submit: function (event){
+			//Important =>  preventDefault!!!, When alert happen dont refreshes
 			event.preventDefault();
-			this.postQuest();
-			this.postAnsw();		
+			if( this.vquestion.toLowerCase().indexOf(this.random_word.name.toLowerCase().slice(0, -1)) == -1 ){
+				//Console.log("\n\n\n\n" + this.random_word.slice(0, -1));
+				alert("Sorunuz kelimeyi içermiyor!");
+			}else if(this.vanswer.indexOf(this.random_word.name.slice(0, -1)) == -1){
+				alert("Cevabınız kelimeyi içermiyor!");
+			}else{
+				this.postQWrel();
+				this.postAWrel();
+			}			
 		},
-		onQueAnsReset: function (event){
+		onGame1Reset: function (event){
 			event.preventDefault();
 			this.vquestion = '';
 			this.vanswer = '';
 			this.show = false;
 			this.$nextTick(() => { this.show = true });
 		},
-/*=======================================================================================*/
-/*[[[[[[[[[[[[[[[[[[[[[[[[[[[ CHANGE GAME ]]]]]]]]]]]]]]]]]]]]]]]]]]]*/
-/*=======================================================================================*/
+		/*-------------------------------------------------------------------*/
+		onGame2Submit: function (event){
+			//Important =>  preventDefault!!!, When alert happen dont refreshes
+			event.preventDefault();
+			if( this.vquestion.toLowerCase().indexOf(this.random_word.name.toLowerCase().slice(0, -1)) == -1 ){
+				//Console.log("\n\n\n\n" + this.random_word.slice(0, -1));
+				alert("Sorunuz kelimeyi içermiyor!");
+			}else{
+				this.postQWrel();
+				this.postAnsw();
+			}
+		},
+		onGame2Reset: function (event){
+			event.preventDefault();
+			this.vquestion = '';
+			this.vanswer = '';
+			this.show = false;
+			this.$nextTick(() => { this.show = true });
+		},
+		/*-------------------------------------------------------------------*/
+		onGame3Submit: function (event){
+			//Important =>  preventDefault!!!, When alert happen dont refreshes
+			event.preventDefault();
+			if(this.vanswer.toLowerCase().indexOf(this.random_word.name.toLowerCase().slice(0, -1)) == -1){
+				alert("Cevabınız kelimeyi içermiyor!");
+			}else{
+				this.postQuest();
+				this.postAWrel();		
+			}
+		},
+		onGame3Reset: function (event){
+			event.preventDefault();
+			this.vquestion = '';
+			this.vanswer = '';
+			this.show = false;
+			this.$nextTick(() => { this.show = true });
+		},
+
+		/*=======================================================================================*/
+		/*[[[[[[[[[[[[[[[[[[[[[[[[[[[ CHANGE GAME ]]]]]]]]]]]]]]]]]]]]]]]]]]]*/
+		/*=======================================================================================*/
 		changeGame: function (){
 			//event.preventDefault();
 			if(this.game1_display == "inline"){

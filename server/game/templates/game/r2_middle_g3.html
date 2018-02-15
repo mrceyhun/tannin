@@ -1,6 +1,6 @@
  <div v-bind:style="{ display: game3_display}">
   <p>Game 3</p>
-  <b-form @submit="onQueAnsSubmit" @reset="onQueAnsReset" v-if="show">
+  <b-form @submit="onGame3Submit" @reset="onGame3Reset" v-if="show">
     <b-form-group id="inputGroupQ" label="Question:" label-for="inputQuestion">
       <b-form-input id="inputQuestion" type="text" v-model="vquestion" required placeholder="The question should NOT include the word.">
 
