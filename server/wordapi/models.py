@@ -32,7 +32,7 @@ class Answer(models.Model):
 #d.phonenumber_set.objects.all()
 class Q_and_W_rel(models.Model):
     #user_id
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.PositiveIntegerField()
     #ID of word
     word = models.PositiveIntegerField()
     def clean(self):

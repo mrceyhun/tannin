@@ -39,9 +39,6 @@ class AnswerSerializer(serializers.ModelSerializer):
         model = Answer
         fields = ("id","sentence",)
 
-
-
-
 #######################################################
 #######################################################
 
@@ -54,10 +51,8 @@ class Q_and_W_relSerializer(serializers.Serializer):
     def to_representation(self, obj):
         try:
             word_obj = Word.objects.filter(pk=obj.word).first()
-            return {"id": obj.id, 
-                "question":{ "id": obj.question.id, "sentence": obj.question.sentence },
-                "word":{"id": word_obj.id, "name": word_obj.name}
-                }
+            return {"question": obj.question,
+                    "word": obj.word }
         except ObjectDoesNotExist:
             print('Given id of the Word is not in the DB')
     
@@ -67,7 +62,7 @@ class Q_and_W_relSerializer(serializers.Serializer):
         # First we create 'mod' data for the AssetModel
         question_data = validated_data.pop('question')
         question_model = Question.objects.create(**question_data)
-        relation = Q_and_W_rel.objects.create(question=question_model, **validated_data)
+        relation = Q_and_W_rel.objects.create(question=question_model.pk, **validated_data)
         return relation
         #else:print("AAAAAAAAAA\n\AAAAAAAAAA\nAAAAAAA\nAAAAAA\nA\n\n\n")
 #######################################################
